@@ -1,0 +1,22 @@
+[{
+  "name": "dashboard",
+  "icon": "Dashboard",
+  "path": "/dashboard"
+}, {
+  "name": "clients",
+  "icon": "User",
+  "path": "/clients"
+},{
+  "name": "templates",
+  "icon": "FileText",
+  "path": "/templates",
+  "children": [{
+    "name": "category",
+    "icon": "Folder",
+    "path": "/templates/category"
+  }, {
+    "name": "template",
+    "icon": "FileText",
+    "path": "/templates/template"
+  }]
+}]

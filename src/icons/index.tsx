@@ -1,3 +1,4 @@
+import React from "react";
 import PlusIcon from "./plus.svg";
 import CloseIcon from "./close.svg";
 import BoxIcon from "./box.svg";
@@ -51,7 +52,117 @@ import HorizontaLDots from "./horizontal-dots.svg";
 import ChatIcon from "./chat.svg";
 import MoreDotIcon from "./more-dot.svg";
 import BellIcon from "./bell.svg";
+// Raw map of imported icon components keyed by their variable names
+const iconsRaw = {
+  DownloadIcon,
+  BellIcon,
+  MoreDotIcon,
+  FileIcon,
+  GridIcon,
+  AudioIcon,
+  VideoIcon,
+  BoltIcon,
+  PlusIcon,
+  BoxIcon,
+  CloseIcon,
+  CheckCircleIcon,
+  AlertIcon,
+  InfoIcon,
+  ErrorIcon,
+  ArrowUpIcon,
+  FolderIcon,
+  ArrowDownIcon,
+  ArrowRightIcon,
+  GroupIcon,
+  BoxIconLine,
+  ShootingStarIcon,
+  DollarLineIcon,
+  TrashBinIcon,
+  AngleUpIcon,
+  AngleDownIcon,
+  PencilIcon,
+  CheckLineIcon,
+  CloseLineIcon,
+  ChevronDownIcon,
+  PaperPlaneIcon,
+  EnvelopeIcon,
+  LockIcon,
+  UserIcon,
+  CalenderIcon,
+  EyeIcon,
+  EyeCloseIcon,
+  TimeIcon,
+  CopyIcon,
+  ChevronLeftIcon,
+  UserCircleIcon,
+  ListIcon,
+  TableIcon,
+  PageIcon,
+  TaskIcon,
+  PieChartIcon,
+  BoxCubeIcon,
+  PlugInIcon,
+  DocsIcon,
+  MailIcon,
+  HorizontaLDots,
+  ChevronUpIcon,
+  ChatIcon,
+};
 
+type IconComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+
+// Helper to convert CamelCase names to kebab-case (e.g. ChevronLeftIcon -> chevron-left)
+const toKebab = (s: string) =>
+  s
+    .replace(/Icon$/i, "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1-$2")
+    .toLowerCase();
+
+// Build a flexible lookup map that accepts several name formats:
+// - original export name: "PlusIcon"
+// - without the "Icon" suffix: "plus"
+// - kebab-case: "plus" or "chevron-left"
+const iconsMap: Record<string, IconComponent> = {};
+Object.keys(iconsRaw).forEach((key) => {
+  const comp = (iconsRaw as any)[key] as IconComponent;
+  iconsMap[key] = comp; // e.g. "PlusIcon"
+  const noSuffix = key.replace(/Icon$/i, "");
+  iconsMap[noSuffix.toLowerCase()] = comp; // e.g. "plus"
+  iconsMap[toKebab(key)] = comp; // e.g. "chevron-left"
+});
+
+export function getIconByName(name?: string): IconComponent | null {
+  if (!name) return null;
+  if ((iconsMap as any)[name]) return (iconsMap as any)[name];
+  const lower = name.toLowerCase();
+  if ((iconsMap as any)[lower]) return (iconsMap as any)[lower];
+  const kebab = toKebab(name);
+  if ((iconsMap as any)[kebab]) return (iconsMap as any)[kebab];
+  // Common alias map for icon names used in menu JSON that don't exactly match
+  // the component variable names. Add more aliases here as needed.
+  const aliases: Record<string, IconComponent> = {
+    dashboard: GridIcon,
+    filetext: FileIcon,
+    "file-text": FileIcon,
+  };
+  if ((aliases as any)[lower]) return (aliases as any)[lower];
+  if ((aliases as any)[kebab]) return (aliases as any)[kebab];
+  return null;
+}
+
+export interface IconProps extends React.SVGProps<SVGSVGElement> {
+  // Either pass a string name (see accepted formats) or a component directly
+  name?: string;
+  component?: IconComponent;
+}
+
+export const Icon: React.FC<IconProps> = ({ name, component, ...rest }) => {
+  const Component = component ?? getIconByName(name ?? "");
+  if (!Component) return null;
+  return <Component {...rest} />;
+};
+
+// re-export all raw icons for callers that prefer direct imports
 export {
   DownloadIcon,
   BellIcon,
@@ -107,3 +218,5 @@ export {
   ChevronUpIcon,
   ChatIcon,
 };
+
+export default Icon;
