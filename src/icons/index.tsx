@@ -124,7 +124,7 @@ const toKebab = (s: string) =>
 // - kebab-case: "plus" or "chevron-left"
 const iconsMap: Record<string, IconComponent> = {};
 Object.keys(iconsRaw).forEach((key) => {
-  const comp = (iconsRaw as any)[key] as IconComponent;
+  const comp = (iconsRaw as unknown as Record<string, IconComponent>)[key] as IconComponent;
   iconsMap[key] = comp; // e.g. "PlusIcon"
   const noSuffix = key.replace(/Icon$/i, "");
   iconsMap[noSuffix.toLowerCase()] = comp; // e.g. "plus"
@@ -133,11 +133,11 @@ Object.keys(iconsRaw).forEach((key) => {
 
 export function getIconByName(name?: string): IconComponent | null {
   if (!name) return null;
-  if ((iconsMap as any)[name]) return (iconsMap as any)[name];
+  if ((iconsMap as unknown as Record<string, IconComponent>)[name]) return (iconsMap as unknown as Record<string, IconComponent>)[name];
   const lower = name.toLowerCase();
-  if ((iconsMap as any)[lower]) return (iconsMap as any)[lower];
+  if ((iconsMap as unknown as Record<string, IconComponent>)[lower]) return (iconsMap as unknown as Record<string, IconComponent>)[lower];
   const kebab = toKebab(name);
-  if ((iconsMap as any)[kebab]) return (iconsMap as any)[kebab];
+  if ((iconsMap as unknown as Record<string, IconComponent>)[kebab]) return (iconsMap as unknown as Record<string, IconComponent>)[kebab];
   // Common alias map for icon names used in menu JSON that don't exactly match
   // the component variable names. Add more aliases here as needed.
   const aliases: Record<string, IconComponent> = {
@@ -145,8 +145,8 @@ export function getIconByName(name?: string): IconComponent | null {
     filetext: FileIcon,
     "file-text": FileIcon,
   };
-  if ((aliases as any)[lower]) return (aliases as any)[lower];
-  if ((aliases as any)[kebab]) return (aliases as any)[kebab];
+  if ((aliases as unknown as Record<string, IconComponent>)[lower]) return (aliases as unknown as Record<string, IconComponent>)[lower];
+  if ((aliases as unknown as Record<string, IconComponent>)[kebab]) return (aliases as unknown as Record<string, IconComponent>)[kebab];
   return null;
 }
 

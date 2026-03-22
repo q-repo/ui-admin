@@ -1,0 +1,17 @@
+{
+  "common": {
+    "menu": "Menu",
+    "others": "Others",
+    "dashboard": "Dashboard",
+    "clients": "Clients",
+    "templates": "Templates"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?"
+  }
+}

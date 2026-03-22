@@ -1,0 +1,17 @@
+{
+  "common": {
+    "menu": "Menu",
+    "others": "Lainnya",
+    "dashboard": "Dasbor",
+    "clients": "Klien",
+    "templates": "Template"
+  },
+  "auth": {
+    "signIn": "Masuk",
+    "signUp": "Daftar",
+    "email": "Email",
+    "password": "Kata Sandi",
+    "rememberMe": "Ingat saya",
+    "forgotPassword": "Lupa kata sandi?"
+  }
+}

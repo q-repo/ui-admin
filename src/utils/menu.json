@@ -1,7 +1,7 @@
 [{
   "name": "dashboard",
   "icon": "Dashboard",
-  "path": "/dashboard"
+  "path": "/"
 }, {
   "name": "clients",
   "icon": "User",

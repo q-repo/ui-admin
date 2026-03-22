@@ -1,0 +1,13 @@
+@reference 'tailwindcss';
+
+.Layout {
+  @apply flex w-screen h-screen overflow-hidden;
+}
+
+.Layout__Container {
+  @apply relative p-6 bg-white h-full w-full z-1 dark:bg-gray-900 sm:p-0;
+}
+
+.Layout__Container section {
+  @apply relative flex lg:flex-row w-full h-screen justify-center flex-col  dark:bg-gray-900 sm:p-0; 
+}
