@@ -154,12 +154,25 @@ export interface IconProps extends React.SVGProps<SVGSVGElement> {
   // Either pass a string name (see accepted formats) or a component directly
   name?: string;
   component?: IconComponent;
+  /**
+   * Convenience prop to set both width & height at once. Accepts any CSS size
+   * value (number = px, or string like "1.5rem").
+   */
+  size?: number | string;
 }
 
-export const Icon: React.FC<IconProps> = ({ name, component, ...rest }) => {
+export const Icon: React.FC<IconProps> = ({ name, component, size, style, ...rest }) => {
   const Component = component ?? getIconByName(name ?? "");
   if (!Component) return null;
-  return <Component {...rest} />;
+  const dimensionProps =
+    typeof size !== "undefined"
+      ? {
+          width: typeof size === "number" ? `${size}px` : size,
+          height: typeof size === "number" ? `${size}px` : size,
+        }
+      : {};
+
+  return <Component style={style} {...dimensionProps} {...rest} />;
 };
 
 // re-export all raw icons for callers that prefer direct imports
