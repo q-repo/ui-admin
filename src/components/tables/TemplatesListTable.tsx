@@ -9,60 +9,66 @@ import {
 
 import Badge from "../ui/badge/Badge";
 
-interface User {
+interface Template {
   id: number;
-  full_name: string;
+  title: string;
+  category: string;
   status: string;
-  role: string;
+  description: string;
   created_at: string;
   updated_at: string;
 }
 
 // Define the table data using the interface
-const tableData: User[] = [
+const tableData: Template[] = [
   {
     id: 1,
-    full_name: "Lindsey Curtis",
+    title: "Welcome Email",
+    category: "Email Templates",
     status: "Active",
-    role: "Web Designer",
+    description: "Welcome email for new subscribers",
     created_at: "2024-01-15",
     updated_at: "2024-03-20",
   },
   {
     id: 2,
-    full_name: "Kaiya George",
-    status: "Inactive",
-    role: "Project Manager",
+    title: "Password Reset",
+    category: "Email Templates",
+    status: "Active",
+    description: "Password reset email template",
     created_at: "2024-02-10",
     updated_at: "2024-04-05",
   },
   {
     id: 3,
-    full_name: "Zain Geidt",
+    title: "SaaS Landing Page",
+    category: "Landing Pages",
     status: "Active",
-    role: "Content Writer",
+    description: "Modern SaaS landing page design",
     created_at: "2024-01-20",
     updated_at: "2024-03-25",
   },
   {
     id: 4,
-    full_name: "Abram Schleifer",
+    title: "Product Launch",
+    category: "Landing Pages",
     status: "Pending",
-    role: "Digital Marketer",
+    description: "Product launch landing page",
     created_at: "2024-03-05",
     updated_at: "2024-04-02",
   },
   {
     id: 5,
-    full_name: "Carla George",
+    title: "Instagram Post",
+    category: "Social Media",
     status: "Active",
-    role: "Front-end Developer",
+    description: "Instagram promotion post template",
     created_at: "2024-01-12",
     updated_at: "2024-04-01",
   },
 ];
 
-export default function BasicTableOne() {
+export default function TemplatesListTable() {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-dark">
       <div className="max-w-full overflow-x-auto">
@@ -75,19 +81,25 @@ export default function BasicTableOne() {
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  Full Name
+                  Title
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Category
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Description
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
                   Status
-                </TableCell>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Role
                 </TableCell>
                 <TableCell
                   isHeader
@@ -106,35 +118,38 @@ export default function BasicTableOne() {
 
             {/* Table Body */}
             <TableBody className="divide-y divide-gray-200 dark:divide-gray-800">
-              {tableData.map((user) => (
-                <TableRow key={user.id}>
+              {tableData.map((template) => (
+                <TableRow key={template.id}>
                   <TableCell className="px-5 py-4 sm:px-6 text-start">
                     <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                      {user.full_name}
+                      {template.title}
                     </span>
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {template.category}
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                    {template.description}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                     <Badge
                       size="sm"
                       color={
-                        user.status === "Active"
+                        template.status === "Active"
                           ? "success"
-                          : user.status === "Pending"
+                          : template.status === "Pending"
                           ? "warning"
                           : "error"
                       }
                     >
-                      {user.status}
+                      {template.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {user.role}
+                    {template.created_at}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {user.created_at}
-                  </TableCell>
-                  <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                    {user.updated_at}
+                    {template.updated_at}
                   </TableCell>
                 </TableRow>
               ))}

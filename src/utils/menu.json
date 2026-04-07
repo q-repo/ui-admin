@@ -3,9 +3,9 @@
   "icon": "Dashboard",
   "path": "/"
 }, {
-  "name": "clients",
+  "name": "users",
   "icon": "User",
-  "path": "/clients"
+  "path": "/users"
 },{
   "name": "templates",
   "icon": "FileText",
@@ -15,8 +15,8 @@
     "icon": "Folder",
     "path": "/templates/category"
   }, {
-    "name": "template",
+    "name": "list",
     "icon": "FileText",
-    "path": "/templates/template"
+    "path": "/templates/list"
   }]
 }]

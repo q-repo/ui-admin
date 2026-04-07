@@ -3,6 +3,7 @@ import './globals.css';
 
 import { SidebarProvider } from '@/context/SidebarContext';
 import { ThemeProvider } from '@/context/ThemeContext';
+import { QueryProvider } from '@/providers/query-provider';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 
@@ -21,11 +22,13 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={`${outfit.className} dark:bg-gray-900`}>
-        <NextIntlClientProvider messages={messages}>
-          <ThemeProvider>
-            <SidebarProvider>{children}</SidebarProvider>
-          </ThemeProvider>
-        </NextIntlClientProvider>
+        <QueryProvider>
+          <NextIntlClientProvider messages={messages}>
+            <ThemeProvider>
+              <SidebarProvider>{children}</SidebarProvider>
+            </ThemeProvider>
+          </NextIntlClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );
