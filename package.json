@@ -22,7 +22,6 @@
     "@tanstack/react-query": "^5.28.0",
     "apexcharts": "^4.3.0",
     "autoprefixer": "^10.4.20",
-    "axios": "^1.6.2",
     "flatpickr": "^4.6.13",
     "next": "15.2.3",
     "next-intl": "^4.8.3",

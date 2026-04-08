@@ -3,8 +3,12 @@ import Styles from './layout.module.css';
 import GridShape from '@/components/common/GridShape';
 import ThemeTogglerTwo from '@/components/common/ThemeTogglerTwo';
 import Icon from '@/icons';
+import { authGuard } from '@/lib/auth';
 
-export default function LayoutAuth({ children }: { children: React.ReactNode }) {
+export default async function LayoutAuth({ children }: { children: React.ReactNode }) {
+  // Redirect to dashboard if already logged in
+  await authGuard(false);
+
   return (
     <main className={Styles.Layout}>
       <div className="relative p-6 bg-white h-full w-full z-1 dark:bg-gray-900 sm:p-0">

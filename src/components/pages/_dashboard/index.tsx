@@ -1,36 +1,32 @@
-import DemographicCard from "@/components/ecommerce/DemographicCard";
-import dynamic from "next/dynamic";
+"use client";
 
-const EcommerceMetrics = dynamic(() => import('@/components/pages/_dashboard/components/EcommerceMetrics'), { ssr: false });
-const MonthlySalesChart = dynamic(() => import('@/components/pages/_dashboard/components/MonthlySalesChart'), { ssr: false });
-const MonthlyTarget = dynamic(() => import('@/components/pages/_dashboard/components/MonthlyTarget'), { ssr: false });
-const RecentOrders = dynamic(() => import('@/components/pages/_dashboard/components/RecentOrders'), { ssr: false });
-const StatisticsChart = dynamic(() => import('@/components/pages/_dashboard/components/StatisticsChart'), { ssr: false });
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import PeriodFilter, { Period } from "./components/PeriodFilter";
+
+const DashboardMetrics = dynamic(() => import("./components/DashboardMetrics"), { ssr: false });
+const SurveyStatisticsChart = dynamic(() => import("./components/SurveyStatisticsChart"), { ssr: false });
+const NewestSurveys = dynamic(() => import("./components/NewestSurveys"), { ssr: false });
 
 export default function Dashboard() {
+  const [period, setPeriod] = useState<Period>("monthly");
+
   return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
-      <div className="col-span-12 space-y-6 xl:col-span-7">
-        <EcommerceMetrics />
-
-        <MonthlySalesChart />
+    <div className="space-y-6">
+      {/* Global period filter */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">Dashboard</h2>
+        <PeriodFilter value={period} onChange={setPeriod} />
       </div>
 
-      <div className="col-span-12 xl:col-span-5">
-        <MonthlyTarget />
-      </div>
+      {/* Row 1: 4 metric cards */}
+      <DashboardMetrics period={period} />
 
-      <div className="col-span-12">
-        <StatisticsChart />
-      </div>
+      {/* Row 2: Statistics chart */}
+      <SurveyStatisticsChart period={period} />
 
-      <div className="col-span-12 xl:col-span-5">
-        <DemographicCard />
-      </div>
-
-      <div className="col-span-12 xl:col-span-7">
-        <RecentOrders />
-      </div>
+      {/* Row 3: Newest surveys table */}
+      <NewestSurveys period={period} />
     </div>
   );
 }

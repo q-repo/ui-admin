@@ -7,16 +7,16 @@
   "icon": "User",
   "path": "/users"
 },{
-  "name": "templates",
+  "name": "surveys",
   "icon": "FileText",
-  "path": "/templates",
+  "path": "/surveys",
   "children": [{
     "name": "category",
     "icon": "Folder",
-    "path": "/templates/category"
+    "path": "/surveys/category"
   }, {
     "name": "list",
     "icon": "FileText",
-    "path": "/templates/list"
+    "path": "/surveys/list"
   }]
 }]

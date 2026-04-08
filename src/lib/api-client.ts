@@ -1,9 +1,8 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-
 // Types
 export interface ApiResponse<T = unknown> {
-  data?: T;
+  success: boolean;
   message?: string;
+  data?: T;
   error?: string;
   pagination?: {
     page: number;
@@ -30,54 +29,141 @@ export interface UserResponse {
   updated_at: string;
 }
 
-export interface LoginResponse {
-  token: string;
-  user: UserResponse;
+export interface Meta {
+  page: number;
+  page_size: number;
+  total: number;
+  total_page: number;
 }
 
-// Create axios instance
-const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/user-service/api/v1",
-  timeout: 10000,
-  headers: {
+export interface UsersListResponse {
+  success: boolean;
+  message: string;
+  data: UserResponse[];
+  meta: Meta;
+}
+
+export interface LoginData {
+  token: string;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: LoginData;
+}
+
+export interface CreateUserRequest {
+  first_name: string;
+  last_name: string;
+  phone: string;
+  email: string;
+  password: string;
+  is_active: boolean;
+  is_verified: boolean;
+  role_name: string;
+}
+
+export interface CreateUserResponse {
+  success: boolean;
+  message: string;
+  data: UserResponse;
+}
+
+export interface UpdateUserStatusRequest {
+  is_active: boolean;
+}
+
+export interface UpdateUserResponse {
+  success: boolean;
+  message: string;
+  data: UserResponse;
+}
+
+export interface DeleteUserResponse {
+  success: boolean;
+  message: string;
+}
+
+// Base URL
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  "http://localhost:3000/user-service/api/v1";
+
+// Build default headers
+function buildHeaders(customHeaders?: HeadersInit): HeadersInit {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
-  },
-});
+    ...(customHeaders as Record<string, string>),
+  };
 
-// Request interceptor
-apiClient.interceptors.request.use(
-  (config) => {
-    // Add token to headers if available
-    if (typeof window !== "undefined") {
-      const token = localStorage.getItem("auth_token");
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("auth_token");
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
     }
-    return config;
-  },
-  (error: unknown) => {
-    return Promise.reject(error);
   }
-);
 
-// Response interceptor
-apiClient.interceptors.response.use(
-  (response: AxiosResponse) => {
-    return response.data;
-  },
-  (error: AxiosError<ApiResponse>) => {
-    // Handle specific error codes
-    if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("auth_token");
-        window.location.href = "/auth/login";
-      }
-    }
+  return headers;
+}
 
-    return Promise.reject(error.response?.data || error);
+// Handle 401 globally
+function handleUnauthorized(status: number) {
+  if (status === 401 && typeof window !== "undefined") {
+    localStorage.removeItem("auth_token");
+    window.location.href = "/auth/login";
   }
-);
+}
+
+// Core fetch wrapper
+async function fetchBaseQuery<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    ...options,
+    headers: buildHeaders(options.headers),
+  });
+
+  handleUnauthorized(response.status);
+
+  const json = await response.json();
+
+  if (!response.ok) {
+    throw new Error(json?.message || json?.error || `Request failed with status ${response.status}`);
+  }
+
+  return json as T;
+}
+
+// HTTP method helpers
+const apiClient = {
+  get: <T>(path: string, options?: RequestInit) =>
+    fetchBaseQuery<T>(path, { ...options, method: "GET" }),
+
+  post: <T>(path: string, body: unknown, options?: RequestInit) =>
+    fetchBaseQuery<T>(path, {
+      ...options,
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+
+  put: <T>(path: string, body: unknown, options?: RequestInit) =>
+    fetchBaseQuery<T>(path, {
+      ...options,
+      method: "PUT",
+      body: JSON.stringify(body),
+    }),
+
+  patch: <T>(path: string, body: unknown, options?: RequestInit) =>
+    fetchBaseQuery<T>(path, {
+      ...options,
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  delete: <T>(path: string, options?: RequestInit) =>
+    fetchBaseQuery<T>(path, { ...options, method: "DELETE" }),
+};
 
 export default apiClient;

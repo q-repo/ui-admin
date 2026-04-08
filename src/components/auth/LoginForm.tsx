@@ -38,28 +38,13 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const onSubmit = (data: LoginFormData) => {
     setGeneralError(null);
 
-    // Determine if input is email, phone, or username
     const loginData: LoginRequest = {
-      password: data.password,
       username: data.username,
+      password: data.password,
     };
 
-    // Check if it's an email (contains @)
-    if (data.username.includes("@")) {
-      loginData.username = data.username;
-    } 
-    // Check if it's a phone (contains only digits and allowed characters)
-    else if (/^[\d+\-\s()]+$/.test(data.username)) {
-      loginData.username = data.username;
-    } 
-    // Otherwise treat as email (fallback)
-    else {
-      loginData.username = data.username;
-    }
-
     login(loginData, {
-      onSuccess: (response) => {
-        console.log("Login Success - API Response:", response);
+      onSuccess: () => {
         onSuccess?.();
         router.push("/");
       },
