@@ -98,7 +98,10 @@ function buildHeaders(customHeaders?: HeadersInit): HeadersInit {
   };
 
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("auth_token");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("auth_token="))
+      ?.split("=")[1];
     if (token) {
       headers["Authorization"] = `Bearer ${token}`;
     }
@@ -110,7 +113,7 @@ function buildHeaders(customHeaders?: HeadersInit): HeadersInit {
 // Handle 401 globally
 function handleUnauthorized(status: number) {
   if (status === 401 && typeof window !== "undefined") {
-    localStorage.removeItem("auth_token");
+    document.cookie = "auth_token=; path=/; Max-Age=0";
     window.location.href = "/auth/login";
   }
 }

@@ -20,10 +20,7 @@ export function useLoginMutation() {
       if (typeof window !== "undefined") {
         const token = result.data.token;
 
-        // Store in localStorage for client-side use
-        localStorage.setItem("auth_token", token);
-
-        // Store in cookie so middleware can read it (server-side auth guard)
+        // Store in cookie — used by both middleware (server-side) and api-client (client-side)
         document.cookie = `auth_token=${token}; path=/; SameSite=Lax`;
       }
 

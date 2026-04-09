@@ -19,8 +19,6 @@ export default function UserDropdown() {
   }
 
   function handleLogout() {
-    // Clear token from localStorage
-    localStorage.removeItem("auth_token");
     // Clear token cookie so middleware recognizes the logout
     document.cookie = "auth_token=; path=/; Max-Age=0";
     router.push("/login");
