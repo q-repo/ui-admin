@@ -58,13 +58,13 @@ export const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-99999">
       {!isFullscreen && (
         <div
-          className="fixed inset-0 h-full w-full bg-gray-400/50 backdrop-blur-[32px]"
+          className="fixed inset-0 h-full w-full bg-gray-400/50 backdrop-blur-[1px] animate-backdrop-in"
           onClick={onClose}
         ></div>
       )}
       <div
         ref={modalRef}
-        className={`${contentClasses}  ${className}`}
+        className={`${contentClasses} ${className} animate-modal-in`}
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (

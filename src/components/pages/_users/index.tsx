@@ -7,14 +7,36 @@ import UsersTableToolbar from "./components/UsersTableToolbar";
 import CreateUserModal from "./components/CreateUserModal";
 import { useGetUsers } from "@/hooks/useGetUsers";
 
+type SortKey = "id" | "first_name" | "email" | "phone" | "is_active" | "is_verified" | "created_at";
+type SortDir = "asc" | "desc";
+
 export default function Users() {
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"All" | "Active" | "Inactive" | "Pending">("All");
+  const [isActive, setIsActive] = useState<boolean | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const PAGE_SIZE = 10;
+  const [pageSize, setPageSize] = useState(10);
+  const [sortKey, setSortKey] = useState<SortKey>("id");
+  const [sortDir, setSortDir] = useState<SortDir>("asc");
 
-  const { data, isLoading, isError, error } = useGetUsers({ page, page_size: PAGE_SIZE });
+  function handleSort(key: SortKey) {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+    setPage(1);
+  }
+
+  const { data, isLoading, isError, error } = useGetUsers({
+    page,
+    page_size: pageSize,
+    search: search.trim() || undefined,
+    is_active: isActive,
+    sort_by: sortKey,
+    sort_dir: sortDir,
+  });
 
   function handleCreateUser() {
     setIsModalOpen(true);
@@ -24,13 +46,13 @@ export default function Users() {
     <div>
       <PageBreadcrumb pageTitle="Users" />
       <div className="space-y-6">
-        <div className="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-dark">
+        <div className="rounded-2xl border p-4 gap-4 flex flex-col border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-dark">
           {/* Toolbar: search, filter, create */}
           <UsersTableToolbar
             search={search}
             onSearchChange={(v) => { setSearch(v); setPage(1); }}
-            filter={filter}
-            onFilterChange={(v) => { setFilter(v); setPage(1); }}
+            isActive={isActive}
+            onIsActiveChange={(v) => { setIsActive(v); setPage(1); }}
             onCreateUser={handleCreateUser}
           />
 
@@ -56,17 +78,31 @@ export default function Users() {
           {!isLoading && !isError && (
             <BasicTableOne
               data={data?.data ?? []}
-              search={search}
-              filter={filter}
+              sortKey={sortKey}
+              sortDir={sortDir}
+              onSort={handleSort}
             />
           )}
 
-          {/* Pagination info */}
+          {/* Pagination */}
           {!isLoading && !isError && data?.meta && (
             <div className="flex items-center justify-between px-5 py-4 border-t border-gray-200 dark:border-gray-800 text-sm text-gray-500 dark:text-gray-400">
-              <span>
-                Showing {((page - 1) * PAGE_SIZE) + 1}–{Math.min(page * PAGE_SIZE, data.meta.total)} of {data.meta.total} users
-              </span>
+              <div className="flex items-center gap-3">
+                <label htmlFor="page-size" className="whitespace-nowrap">Rows per page:</label>
+                <select
+                  id="page-size"
+                  value={pageSize}
+                  onChange={(e) => { setPageSize(Number(e.target.value)); setPage(1); }}
+                  className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                >
+                  {[5, 10, 50, 100].map((size) => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+                <span className="hidden sm:inline">
+                  Showing {((page - 1) * pageSize) + 1}–{Math.min(page * pageSize, data.meta.total)} of {data.meta.total}
+                </span>
+              </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}

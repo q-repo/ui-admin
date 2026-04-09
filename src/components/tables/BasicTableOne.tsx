@@ -15,12 +15,6 @@ import type { UserResponse } from "@/lib/api-client";
 import { useDeleteUser } from "@/hooks/useDeleteUser";
 import { useUpdateUserStatus } from "@/hooks/useUpdateUserStatus";
 
-interface BasicTableOneProps {
-  data: UserResponse[];
-  search?: string;
-  filter?: "All" | "Active" | "Inactive" | "Pending";
-}
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
     day: "2-digit",
@@ -135,49 +129,86 @@ function DeleteButton({ user }: { user: UserResponse }) {
   );
 }
 
-export default function BasicTableOne({ data, search = "", filter = "All" }: BasicTableOneProps) {
-  const filteredData = data.filter((user) => {
-    const fullName = `${user.first_name} ${user.last_name}`.toLowerCase();
-    const matchesSearch =
-      search.trim() === "" ||
-      fullName.includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase()) ||
-      user.phone.includes(search);
+type SortKey = "id" | "first_name" | "email" | "phone" | "is_active" | "is_verified" | "created_at";
+type SortDir = "asc" | "desc";
 
-    const isActive = user.is_active ? "Active" : "Inactive";
-    const matchesFilter = filter === "All" || isActive === filter;
+function SortIcon({ active, dir }: { active: boolean; dir: SortDir }) {
+  return (
+    <span className="inline-flex flex-col ml-1 gap-0.5 align-middle">
+      <svg
+        className={`w-2.5 h-2.5 transition-colors ${active && dir === "asc" ? "text-brand-500" : "text-gray-300 dark:text-gray-600"}`}
+        viewBox="0 0 10 6" fill="currentColor"
+      >
+        <path d="M5 0L10 6H0L5 0Z" />
+      </svg>
+      <svg
+        className={`w-2.5 h-2.5 transition-colors ${active && dir === "desc" ? "text-brand-500" : "text-gray-300 dark:text-gray-600"}`}
+        viewBox="0 0 10 6" fill="currentColor"
+      >
+        <path d="M5 6L0 0H10L5 6Z" />
+      </svg>
+    </span>
+  );
+}
 
-    return matchesSearch && matchesFilter;
-  });
+interface BasicTableOneProps {
+  data: UserResponse[];
+  sortKey: SortKey;
+  sortDir: SortDir;
+  onSort: (key: SortKey) => void;
+}
+
+export default function BasicTableOne({ data, sortKey, sortDir, onSort }: BasicTableOneProps) {
+  function headerProps(key: SortKey) {
+    return {
+      onClick: () => onSort(key),
+      className:
+        "px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400 cursor-pointer select-none hover:text-gray-700 dark:hover:text-gray-200 transition-colors",
+    };
+  }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-dark">
+    <div className="overflow-hidden rounded-xl border border-gray-200 p-4 bg-white dark:border-gray-800 dark:bg-gray-dark">
       <div className="max-w-full overflow-x-auto">
         <div className="min-w-175">
           <Table>
             {/* Table Header */}
             <TableHeader className="border-b border-gray-200 dark:border-gray-800">
               <TableRow>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  #
+                <TableCell isHeader {...headerProps("id")}>
+                  <span className="inline-flex items-center">
+                    # <SortIcon active={sortKey === "id"} dir={sortDir} />
+                  </span>
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Full Name
+                <TableCell isHeader {...headerProps("first_name")}>
+                  <span className="inline-flex items-center">
+                    Full Name <SortIcon active={sortKey === "first_name"} dir={sortDir} />
+                  </span>
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Email
+                <TableCell isHeader {...headerProps("email")}>
+                  <span className="inline-flex items-center">
+                    Email <SortIcon active={sortKey === "email"} dir={sortDir} />
+                  </span>
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Phone
+                <TableCell isHeader {...headerProps("phone")}>
+                  <span className="inline-flex items-center">
+                    Phone <SortIcon active={sortKey === "phone"} dir={sortDir} />
+                  </span>
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Status
+                <TableCell isHeader {...headerProps("is_active")}>
+                  <span className="inline-flex items-center">
+                    Status <SortIcon active={sortKey === "is_active"} dir={sortDir} />
+                  </span>
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Verified
+                <TableCell isHeader {...headerProps("is_verified")}>
+                  <span className="inline-flex items-center">
+                    Verified <SortIcon active={sortKey === "is_verified"} dir={sortDir} />
+                  </span>
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
-                  Created At
+                <TableCell isHeader {...headerProps("created_at")}>
+                  <span className="inline-flex items-center">
+                    Created At <SortIcon active={sortKey === "created_at"} dir={sortDir} />
+                  </span>
                 </TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
                   Actions
@@ -187,8 +218,8 @@ export default function BasicTableOne({ data, search = "", filter = "All" }: Bas
 
             {/* Table Body */}
             <TableBody className="divide-y divide-gray-200 dark:divide-gray-800">
-              {filteredData.length > 0 ? (
-                filteredData.map((user) => (
+              {data.length > 0 ? (
+                data.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="px-5 py-4 text-start text-sm text-gray-400 dark:text-gray-500">
                       {user.id}

@@ -165,6 +165,29 @@
   --z-index-9999: 9999;
   --z-index-99999: 99999;
   --z-index-999999: 999999;
+
+  --animate-modal-in: modal-fade-up 0.25s ease-out both;
+  --animate-backdrop-in: modal-backdrop-in 0.2s ease-out both;
+}
+
+@keyframes modal-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /*
