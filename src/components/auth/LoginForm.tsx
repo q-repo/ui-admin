@@ -114,7 +114,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </Link>
       </div>
       <div>
-        <Button className="w-full" size="sm" disabled={isPending}>
+        <Button className="w-full" size="sm" type="submit" disabled={isPending}>
           {isPending ? "Signing in..." : "Sign in"}
         </Button>
       </div>
